@@ -185,6 +185,23 @@ public class SimpleHashMap<K, V> {
 	 * @throws NullPointerException if key is <tt>null</tt>
 	 */
 	public V remove(Object key) {
+		//Converts key into hashIndex and checks if the hashIndex is below zero.
+		int hashIndex = key.hashCode();
+		if(key.hashCode()%tableSize > 0)
+		{
+			hashIndex = key.hashCode() % tableSize;
+		}
+		else
+		{
+			hashIndex = (key.hashCode() % tableSize) + tableSize;
+		}
+		Iterator<Entry> itr = hashMap[hashIndex].iterator();
+		while (itr.hasNext()){
+			Entry tmp = itr.next();
+			if (tmp.getValue().equals(get(key))){
+				
+			}
+		}
 		numItems--;
 	}
 
