@@ -29,163 +29,190 @@ import java.util.List;
  * codes are the same that the keys are equal since collisions are possible.</p>
  */
 public class SimpleHashMap<K, V> {
-    /**
-     * A map entry (key-value pair).
-     *
-     */
-    public static class Entry<K, V> {
-        private K key;
-        private V value;
+	/**
+	 * A map entry (key-value pair).
+	 *
+	 */
+	public static class Entry<K, V> {
+		private K key;
+		private V value;
 
-        /**
-         * Constructs the map entry with the specified key and value.
-         */
-        public Entry(K k, V v) {
-            // TODO
-            key = k;
-            value = v;
-        }
+		/**
+		 * Constructs the map entry with the specified key and value.
+		 */
+		public Entry(K k, V v) {
+			// TODO
+			key = k;
+			value = v;
+		}
 
-        /**
-         * Returns the key corresponding to this entry.
-         *
-         * @return the key corresponding to this entry
-         */
-        public K getKey() {
-            // TODO
-            return this.key;
-        }
+		/**
+		 * Returns the key corresponding to this entry.
+		 *
+		 * @return the key corresponding to this entry
+		 */
+		public K getKey() {
+			// TODO
+			return this.key;
+		}
 
-        /**
-         * Returns the value corresponding to this entry.
-         *
-         * @return the value corresponding to this entry
-         */
-        public V getValue() {
-            // TODO
-            return this.value;
-        }
+		/**
+		 * Returns the value corresponding to this entry.
+		 *
+		 * @return the value corresponding to this entry
+		 */
+		public V getValue() {
+			// TODO
+			return this.value;
+		}
 
-        /**
-         * Replaces the value corresponding to this entry with the specified
-         * value.
-         *
-         * @param value new value to be stored in this entry
-         * @return old value corresponding to the entry
-         */
-        public V setValue(V value) {
-            // TODO
-            V tmpValue = this.value;
-            this.value = value;
-            return tmpValue;
-        }
-    }
+		/**
+		 * Replaces the value corresponding to this entry with the specified
+		 * value.
+		 *
+		 * @param value new value to be stored in this entry
+		 * @return old value corresponding to the entry
+		 */
+		public V setValue(V value) {
+			// TODO
+			V tmpValue = this.value;
+			this.value = value;
+			return tmpValue;
+		}
+	}
 
-    // TODO You may add private fields here
-    private int initialTableSize;
-    private int tableSize;
-    //Variable used for load factor
-    private double loadFactor;
-    //Variable used for maximum load factor
-    private double maxLoadFactor;
-    //Holds on to the number of items
-    private int numItems;
-    //Note there may be an error in which the hash map is defined
-    private LinkedList<Entry>[] hashMap;
-    /**
-     * Constructs an empty hash map with initial capacity <tt>11</tt> and
-     * maximum load factor <tt>0.75</tt>.
-     **/
-    public SimpleHashMap() {
-        // TODO
-        tableSize = initialTableSize = 11;
-        maxLoadFactor = .75;
-        hashMap =  ( LinkedList<Entry>[])(new LinkedList[initialTableSize]);
-    }
+	// TODO You may add private fields here
+	private int initialTableSize;
+	private int tableSize;
+	//Variable used for load factor
+	private double loadFactor;
+	//Variable used for maximum load factor
+	private double maxLoadFactor;
+	//Holds on to the number of items
+	private int numItems;
+	//Note there may be an error in which the hash map is defined
+	private LinkedList<Entry>[] hashMap;
+	/**
+	 * Constructs an empty hash map with initial capacity <tt>11</tt> and
+	 * maximum load factor <tt>0.75</tt>.
+	 **/
+	public SimpleHashMap() {
+		// TODO
+		tableSize = initialTableSize = 11;
+		maxLoadFactor = .75;
+		hashMap =  ( LinkedList<Entry>[])(new LinkedList[initialTableSize]);
+	}
 
-    /**
-     * Returns the value to which the specified key is mapped, or null if this
-     * map contains no mapping for the key.
-     *
-     * @param key the key whose associated value is to be returned
-     * @return the value to which the specified key is mapped, or <tt>null</tt>
-     * if this map contains no mapping for the key
-     * @throws NullPointerException if the specified key is <tt>null</tt>
-     */
-    public V get(Object key) {
-        //So we know that values are associated to keys
-        int hashIndex = 0;
-        if(key.hashCode()%tableSize > 0)
-        {
-            hashIndex = key.hashCode()%tableSize;
-        }
-        else
-        {
-            hashIndex = (key.hashCode()%tableSize) + tableSize;
-        }
+	/**
+	 * Returns the value to which the specified key is mapped, or null if this
+	 * map contains no mapping for the key.
+	 *
+	 * @param key the key whose associated value is to be returned
+	 * @return the value to which the specified key is mapped, or <tt>null</tt>
+	 * if this map contains no mapping for the key
+	 * @throws NullPointerException if the specified key is <tt>null</tt>
+	 */
+	public V get(Object key) {
 
-         for(int i = 0; i < hashMap.length; i++)
-         {
-             Iterator<Entry> entryIterator = hashMap[i].iterator();
+		int hashIndex = 0;
+		if(key.hashCode()%tableSize > 0)
+		{
+			hashIndex = key.hashCode()%tableSize;
+		}
+		else
+		{
+			hashIndex = (key.hashCode()%tableSize) + tableSize;
+		}
 
-         }
-        // TODO
-    }
+		Iterator<Entry> entryIterator = hashMap[hashIndex].iterator();
+		while(entryIterator.hasNext()){
+			Entry tmp = entryIterator.next();
+			if (tmp.getKey().equals(key)){
+				return (V) tmp.getValue();
+			}
+		}
+		return null;
+	}
 
-    /**
-     * <p>Associates the specified value with the specified key in this map.
-     * Neither the key nor the value can be <tt>null</tt>. If the map
-     * previously contained a mapping for the key, the old value is replaced.</p>
-     *
-     * <p>If the load factor of the hash table after the insertion would exceed
-     * the maximum load factor <tt>0.75</tt>, then the resizing mechanism is
-     * triggered. The size of the table should grow at least by a constant
-     * factor in order to ensure the amortized constant complexity. You must also
-     * ensure that the new selected size is Prime. After that, all of the mappings 
-     * are rehashed to the new table.</p>
-     *
-     * @param key key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     * @throws NullPointerException if the key or value is <tt>null</tt>
-     */
-    public V put(K key, V value) {
-        // TODO
-        //Rehashing may need to take place here.
-    }
+	/**
+	 * <p>Associates the specified value with the specified key in this map.
+	 * Neither the key nor the value can be <tt>null</tt>. If the map
+	 * previously contained a mapping for the key, the old value is replaced.</p>
+	 *
+	 * <p>If the load factor of the hash table after the insertion would exceed
+	 * the maximum load factor <tt>0.75</tt>, then the resizing mechanism is
+	 * triggered. The size of the table should grow at least by a constant
+	 * factor in order to ensure the amortized constant complexity. You must also
+	 * ensure that the new selected size is Prime. After that, all of the mappings 
+	 * are rehashed to the new table.</p>
+	 *
+	 * @param key key with which the specified value is to be associated
+	 * @param value value to be associated with the specified key
+	 * @return the previous value associated with <tt>key</tt>, or
+	 * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+	 * @throws NullPointerException if the key or value is <tt>null</tt>
+	 */
+	public V put(K key, V value) {
+		
+		//Converts key into hashIndex and checks if the hashIndex is below zero.
+		int hashIndex = key.hashCode();
+		if(key.hashCode()%tableSize > 0)
+		{
+			hashIndex = key.hashCode() % tableSize;
+		}
+		else
+		{
+			hashIndex = (key.hashCode() % tableSize) + tableSize;
+		}
+		
+		//Adds new Entry to the hashMap.
+		hashMap[hashIndex].add(new Entry(key , value));
+		
+				//Check to see if hashMap is too full.
+		if (numItems/tableSize >= .75){
+			rehash();
+		}
+		numItems++;
+	}
 
-    /**
-     * Removes the mapping for the specified key from this map if present. This
-     * method does nothing if the key is not in the hash table.
-     *
-     * @param key key whose mapping is to be removed from the map
-     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt>
-     * if there was no mapping for <tt>key</tt>.
-     * @throws NullPointerException if key is <tt>null</tt>
-     */
-    public V remove(Object key) {
-        // TODO
-    }
+	/**
+	 * Removes the mapping for the specified key from this map if present. This
+	 * method does nothing if the key is not in the hash table.
+	 *
+	 * @param key key whose mapping is to be removed from the map
+	 * @return the previous value associated with <tt>key</tt>, or <tt>null</tt>
+	 * if there was no mapping for <tt>key</tt>.
+	 * @throws NullPointerException if key is <tt>null</tt>
+	 */
+	public V remove(Object key) {
+		numItems--;
+	}
 
-    /**
-     * Returns the number of key-value mappings in this map.
-     *
-     * @return the number of key-value mappings in this map
-     */
-    public int size() {
-        // TODO
-    }
+	/**
+	 * Returns the number of key-value mappings in this map.
+	 *
+	 * @return the number of key-value mappings in this map
+	 */
+	public int size() {
+		return numItems;
+	}
 
-    /**
-     * Returns a list of all the mappings contained in this map. This method
-     * will iterate over the hash table and collect all the entries into a new
-     * list. If the map is empty, return an empty list (not <tt>null</tt>).
-     * The order of entries in the list can be arbitrary.
-     *
-     * @return a list of mappings in this map
-     */
-    public List<Entry<K, V>> entries() {
-        //TODO
-    }
+	/**
+	 * Returns a list of all the mappings contained in this map. This method
+	 * will iterate over the hash table and collect all the entries into a new
+	 * list. If the map is empty, return an empty list (not <tt>null</tt>).
+	 * The order of entries in the list can be arbitrary.
+	 *
+	 * @return a list of mappings in this map
+	 */
+	public List<Entry<K, V>> entries() {
+		//TODO
+	}
+	
+	private void rehash(){
+		tableSize = tableSize*2;
+		if (tableSize > maxLoadFactor){
+			tableSize = (int) maxLoadFactor;
+		}
+	}
 }
