@@ -166,9 +166,10 @@ public class SimpleHashMap<K, V> {
 		Entry entry = new Entry(key,value);
 
 
-		if (hashMap[hashIndex].equals(null)){
+		if (hashMap[hashIndex] == null){
 			LinkedList<Entry> list = new LinkedList<Entry>();
 			list.add(entry);
+			hashMap[hashIndex] = list;
 		}else{
 			hashMap[hashIndex].add(entry);
 		}
