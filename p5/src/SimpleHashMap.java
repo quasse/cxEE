@@ -153,26 +153,31 @@ public class SimpleHashMap<K, V> {
 	 * @throws NullPointerException if the key or value is <tt>null</tt>
 	 */
 	public V put(K key, V value) {
-		
+
+		//********Still need to do something about duplicates****************
 		//Converts key into hashIndex and checks if the hashIndex is below zero.
-		int hashIndex = key.hashCode();
-		if(key.hashCode()%tableSize > 0)
+		int hashIndex = key.hashCode() % tableSize;
+		if(hashIndex % tableSize < 0)
 		{
-			hashIndex = key.hashCode() % tableSize;
+			hashIndex = hashIndex + tableSize;
 		}
-		else
-		{
-			hashIndex = (key.hashCode() % tableSize) + tableSize;
-		}
-		
+
 		//Adds new Entry to the hashMap.
-		hashMap[hashIndex].add(new Entry(key , value));
-		
-				//Check to see if hashMap is too full.
+		Entry entry = new Entry(key,value);
+
+
+		if (hashMap[hashIndex].equals(null)){
+			LinkedList<Entry> list = new LinkedList<Entry>();
+			list.add(entry);
+		}else{
+			hashMap[hashIndex].add(entry);
+		}
+		//Check to see if hashMap is too full.
 		if (numItems/tableSize >= .75){
 			rehash();
 		}
 		numItems++;
+		return value;
 	}
 
 	/**
@@ -185,6 +190,7 @@ public class SimpleHashMap<K, V> {
 	 * @throws NullPointerException if key is <tt>null</tt>
 	 */
 	public V remove(Object key) {
+		Entry tmp = null;
 		//Converts key into hashIndex and checks if the hashIndex is below zero.
 		int hashIndex = key.hashCode();
 		if(key.hashCode()%tableSize > 0)
@@ -197,12 +203,13 @@ public class SimpleHashMap<K, V> {
 		}
 		Iterator<Entry> itr = hashMap[hashIndex].iterator();
 		while (itr.hasNext()){
-			Entry tmp = itr.next();
-			if (tmp.getValue().equals(get(key))){
-				
+			tmp = itr.next();
+			if (tmp.getKey().equals(get(key))){
+				hashMap[hashIndex].remove(key);
 			}
 		}
 		numItems--;
+		return (V) tmp.getValue();
 	}
 
 	/**
@@ -223,9 +230,15 @@ public class SimpleHashMap<K, V> {
 	 * @return a list of mappings in this map
 	 */
 	public List<Entry<K, V>> entries() {
-		//TODO
+		List<Entry<K,V>> list = null;
+		for(int i = 0; i < hashMap.length; i++){
+			Iterator<Entry> itr = hashMap[i].iterator();
+			while (itr.hasNext());
+			list.add(itr.next());
+		}
+		return list;
 	}
-	
+
 	private void rehash(){
 		tableSize = tableSize*2;
 		if (tableSize > maxLoadFactor){

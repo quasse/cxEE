@@ -1,6 +1,8 @@
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+	SimpleHashMap<Integer, String> map = new SimpleHashMap<Integer, String>();
+	map.put(1, "hi");
+	System.out.println(map.get(1));
     }
 }
