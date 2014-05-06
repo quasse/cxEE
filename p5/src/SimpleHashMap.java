@@ -126,7 +126,7 @@ public class SimpleHashMap<K, V> {
 		if (hashMap[hashIndex] == null){
 			return null;
 		}
-		
+
 		Iterator<Entry> entryIterator = hashMap[hashIndex].iterator();
 		while(entryIterator.hasNext()){
 			Entry tmp = entryIterator.next();
@@ -205,17 +205,16 @@ public class SimpleHashMap<K, V> {
 		{
 			hashIndex = (key.hashCode() % tableSize) + tableSize;
 		}
-		
+
 		Iterator<Entry> itr = hashMap[hashIndex].iterator();
-		V test1 = get(key);
 		while (itr.hasNext()){
 			tmp = itr.next();
-			V test2 = (V) tmp.getKey();
-			System.out.println("get value" + get(key));
-			System.out.println("tmp value" + tmp.getValue());
-			if (test1.equals(test2)){
-				System.out.println("boxx");
-				hashMap[hashIndex].remove(key);
+			if (get(key).equals(tmp.getValue())){
+				if (hashMap[hashIndex].size() == 1){
+					hashMap[hashIndex] = null;
+				}else{
+					hashMap[hashIndex].remove(key);
+				}
 			}
 		}
 		numItems--;
