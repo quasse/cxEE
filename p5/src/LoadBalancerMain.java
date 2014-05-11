@@ -43,7 +43,8 @@ public class LoadBalancerMain
 
         int serverNumber = 0;
 
-        int[] accessTimeArray = new int[maxServers];
+        long[] accessTimeArray = new long[maxServers];
+        int[] pagesForServer = new int[maxServers];
         //PageServer pageServer;
         while (scanner.hasNextLine())
         {
@@ -59,7 +60,27 @@ public class LoadBalancerMain
              accessTimeArray[serverNumber]++;
             //Might have to change how this is put
             map.put(pageNumber, new PageServer("192.168.0." + serverNumber, accessTimeArray[serverNumber]));
-            System.out.println(map.get(pageNumber).getServerIPAddress());
+            pagesForServer[serverNumber]++;
+            //System.out.println(map.get(pageNumber).getAccessTime());
+            //Deal with page eviction
+            SimpleHashMap.Entry pageToEvict = null;
+            long leastUsedAccessTime = 100000000;
+            if(pagesForServer[serverNumber] > cacheSize)
+            {
+               //The hunt for the least used page begins
+               for(int i = 0; i < map.entries().size(); i++)
+               {
+                 if(map.entries().get(i).getValue().getServerIPAddress().equals("192.168.0" + serverNumber))
+                 {
+                      if(map.entries().get(i).getValue().getAccessTime() <  leastUsedAccessTime)
+                      {
+                          leastUsedAccessTime = map.entries().get(i).getValue().getAccessTime();
+                          pageToEvict = map.entries().get(i);
+                      }
+                 }
+               }
+                map.remove(pageToEvict);
+            }
             //Increment server
             serverNumber++;
         }
