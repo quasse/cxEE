@@ -268,10 +268,55 @@ public class SimpleHashMap<K, V> {
 		return list;
 	}
 
-	private void rehash(){
-		tableSize = tableSize*2;
-		if (tableSize > maxLoadFactor){
-			tableSize = (int) maxLoadFactor;
-		}
-	}
+    private void rehash(){
+
+
+        tableSize = tableSize*2;
+        if (tableSize > maxLoadFactor){
+            tableSize = (int) maxLoadFactor;
+        }
+
+        //creates a temporary Array twice the size of the tableSize
+        LinkedList<Entry>[] tmp =
+                ( LinkedList<Entry>[])(new LinkedList[tableSize]);
+
+        //Iterates through the array, putting the Entry into tmp if there
+        //is an entry.
+        for (int i = 0; i < hashMap.length; i++){
+            if (!hashMap[i].isEmpty()){
+                Iterator<Entry> itr = hashMap[i].iterator();
+                while (itr.hasNext()){
+                    Entry entry = itr.next();
+                    rePut((K)entry.getKey(), (V) entry.getValue(), tmp);
+                }
+            }
+        }
+        hashMap = tmp;
+    }
+
+    private void rePut(K key, V value, LinkedList<Entry>[] tmp){
+        int hashIndex = key.hashCode() % tableSize;
+        if(hashIndex % tableSize < 0)
+        {
+            hashIndex = hashIndex + tableSize;
+        }
+
+        //Adds new Entry to the hashMap.
+        Entry entry = new Entry(key,value);
+
+
+        if (tmp[hashIndex] == null){
+            LinkedList<Entry> list = new LinkedList<Entry>();
+            list.add(entry);
+            tmp[hashIndex] = list;
+        }else{
+            tmp[hashIndex].add(entry);
+        }
+        //Check to see if hashMap is too full.
+        if (numItems/tableSize >= .75){
+            rehash();
+        }
+        numItems++;
+    }
+
 }
