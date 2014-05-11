@@ -167,7 +167,6 @@ public class SimpleHashMap<K, V> {
 
 		//Adds new Entry to the hashMap.
 		Entry entry = new Entry(key,value);
-        System.out.println(key);
 
         boolean hasDuplicate = false;
         //Need to check key
@@ -270,20 +269,15 @@ public class SimpleHashMap<K, V> {
 
     private void rehash(){
 
-
-        tableSize = tableSize*2;
-        if (tableSize > maxLoadFactor){
-            tableSize = (int) maxLoadFactor;
-        }
-
         //creates a temporary Array twice the size of the tableSize
+        tableSize = tableSize*2;
         LinkedList<Entry>[] tmp =
                 ( LinkedList<Entry>[])(new LinkedList[tableSize]);
 
         //Iterates through the array, putting the Entry into tmp if there
         //is an entry.
         for (int i = 0; i < hashMap.length; i++){
-            if (!hashMap[i].isEmpty()){
+            if (hashMap[i] != null){
                 Iterator<Entry> itr = hashMap[i].iterator();
                 while (itr.hasNext()){
                     Entry entry = itr.next();
@@ -295,7 +289,7 @@ public class SimpleHashMap<K, V> {
     }
 
     private void rePut(K key, V value, LinkedList<Entry>[] tmp){
-        int hashIndex = key.hashCode() % tableSize;
+    	int hashIndex = key.hashCode() % tableSize;
         if(hashIndex % tableSize < 0)
         {
             hashIndex = hashIndex + tableSize;
