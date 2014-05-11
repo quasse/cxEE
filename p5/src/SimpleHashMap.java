@@ -101,6 +101,7 @@ public class SimpleHashMap<K, V> {
 		tableSize = initialTableSize = 11;
 		maxLoadFactor = .75;
 		hashMap =  ( LinkedList<Entry>[])(new LinkedList[initialTableSize]);
+        //List<Entry<K,V>>[] myHashTable = (LinkedList<Entry<K,V>>[]) new LinkedList<?>[capacity];?
 	}
 
 	/**
@@ -157,7 +158,6 @@ public class SimpleHashMap<K, V> {
 	 */
 	public V put(K key, V value) {
 
-		//********Still need to do something about duplicates****************
 		//Converts key into hashIndex and checks if the hashIndex is below zero.
 		int hashIndex = key.hashCode() % tableSize;
 		if(hashIndex % tableSize < 0)
@@ -167,14 +167,34 @@ public class SimpleHashMap<K, V> {
 
 		//Adds new Entry to the hashMap.
 		Entry entry = new Entry(key,value);
+        System.out.println(key);
 
-
+        boolean hasDuplicate = false;
+        //Need to check key
 		if (hashMap[hashIndex] == null){
 			LinkedList<Entry> list = new LinkedList<Entry>();
 			list.add(entry);
 			hashMap[hashIndex] = list;
 		}else{
-			hashMap[hashIndex].add(entry);
+            Iterator<Entry> entryItr = hashMap[hashIndex].iterator();
+            while(entryItr.hasNext())
+            {
+                Entry entryUpdate = entryItr.next();
+                 if(entryUpdate.getKey().equals(key))
+                 {
+                   hasDuplicate = true;
+                   //Found duplicate key so update
+                    entryUpdate.setValue(value);
+                 }
+            }
+            if(!hasDuplicate)
+            {
+			    hashMap[hashIndex].add(entry);
+            }
+            else
+            {
+                //Need
+            }
 		}
 		//Check to see if hashMap is too full.
 		if (numItems/tableSize >= .75){
@@ -249,53 +269,9 @@ public class SimpleHashMap<K, V> {
 	}
 
 	private void rehash(){
-		
-		
 		tableSize = tableSize*2;
 		if (tableSize > maxLoadFactor){
 			tableSize = (int) maxLoadFactor;
 		}
-		
-		//creates a temporary Array twice the size of the tableSize
-		LinkedList<Entry>[] tmp =  
-				( LinkedList<Entry>[])(new LinkedList[tableSize]);
-		
-		//Iterates through the array, putting the Entry into tmp if there 
-		//is an entry.
-		for (int i = 0; i < hashMap.length; i++){
-			if (!hashMap[i].isEmpty()){
-				Iterator<Entry> itr = hashMap[i].iterator();
-				while (itr.hasNext()){
-					Entry entry = itr.next();
-					rePut((K)entry.getKey(), (V) entry.getValue(), tmp);
-				}
-			}
-		}
-		hashMap = tmp;
-	}
-	
-	private void rePut(K key, V value, LinkedList<Entry>[] tmp){
-		int hashIndex = key.hashCode() % tableSize;
-		if(hashIndex % tableSize < 0)
-		{
-			hashIndex = hashIndex + tableSize;
-		}
-
-		//Adds new Entry to the hashMap.
-		Entry entry = new Entry(key,value);
-
-
-		if (tmp[hashIndex] == null){
-			LinkedList<Entry> list = new LinkedList<Entry>();
-			list.add(entry);
-			tmp[hashIndex] = list;
-		}else{
-			tmp[hashIndex].add(entry);
-		}
-		//Check to see if hashMap is too full.
-		if (numItems/tableSize >= .75){
-			rehash();
-		}
-		numItems++;
 	}
 }
