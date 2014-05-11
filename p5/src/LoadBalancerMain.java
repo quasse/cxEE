@@ -2,6 +2,7 @@ import com.sun.corba.se.spi.activation.Server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.List;
 
@@ -37,14 +38,30 @@ public class LoadBalancerMain
         
         String line;
        // SimpleHashMap<K, V> map = new SimpleHashMap<K, V>(); //TODO: Set the types for the HashMap
-        SimpleHashMap<String, Server> map = new SimpleHashMap<String, Server>();
+        //Increase the counter by 1 each time you add a server
+        SimpleHashMap<String, PageServer> map = new SimpleHashMap<String, PageServer>();
 
+        int serverNumber = 0;
 
-        
-        
-        while (scanner.hasNextLine()) {
-						line = scanner.nextLine();
+        int[] accessTimeArray = new int[maxServers];
+        //PageServer pageServer;
+        while (scanner.hasNextLine())
+        {
             //TODO: Handle each page request
+            line = scanner.nextLine().trim();
+            String pageNumber = line;
+            //Need to use the round robin technique.. but without the queue
+            if(serverNumber > maxServers - 1)
+            {
+                serverNumber = 0;
+            }
+            //Incremenet accessTime
+             accessTimeArray[serverNumber]++;
+            //Might have to change how this is put
+            map.put(pageNumber, new PageServer("192.168.0." + serverNumber, accessTimeArray[serverNumber]));
+            System.out.println(map.get(pageNumber).getServerIPAddress());
+            //Increment server
+            serverNumber++;
         }
         scanner.close();
         
